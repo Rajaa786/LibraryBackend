@@ -1,10 +1,10 @@
+require("dotenv").config();
 const express = require("express");
 const bodyParser = require("body-parser");
 // const cors = require("cors");
-require("dotenv").config();
 const app = express();
-// app.use(cors());
 
+// app.use(cors());
 const port = process.env.PORT;
 
 const knex = require("./database/db.js");
@@ -32,9 +32,10 @@ app.post("/addNewBook", (req, res) => {
     .insert({
       book_name: req.body.book_name,
       author_name: req.body.author,
-      borrowed_by: req.body.borrowed_by,
+      stud_id: req.body.student_id,
       borrowed_date: req.body.borrowed_date,
       expected_return_date: req.body.return_date,
+      student_id: req.body.student_d,
     })
     .then(() => {
       res.send("Book Added!");
@@ -55,7 +56,7 @@ app.put("/updateStudent/:id", (req, res) => {
       res.send("Updated Successfully!");
     })
     .catch((err) => {
-      res.send(err);
+      res.send(err.message);
     });
 });
 
@@ -63,13 +64,14 @@ app.put("/updateBook/:id", (req, res) => {
   knex("books")
     .where("id", req.params.id)
     .update({
-      book_name: req.body.first_name,
+      book_name: req.body.book_name,
       author_name: req.body.author,
-      borrowed_by: req.body.borrowed_by,
+      stud_id: req.body.student_id,
       borrowed_date: req.body.borrowed_date,
       expected_return_date: req.body.return_date,
+      student_id: req.body.student_d,
     })
-    .then(() => {
+    .then((res) => {
       res.send("Updated Successfully!");
     })
     .catch((err) => {
@@ -81,13 +83,17 @@ app.get("/getStudents", (req, res) => {
   knex
     .select()
     .from("students")
-    .then((result) => res.send(result));
+    .orderBy("id")
+    .then((result) => {
+      res.send(result);
+    });
 });
 
 app.get("/getBooks", (req, res) => {
   knex
     .select()
     .from("books")
+    .orderBy("id")
     .then((result) => res.send(result));
 });
 
